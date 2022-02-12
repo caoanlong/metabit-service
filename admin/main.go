@@ -1,23 +1,11 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"metabit-service/admin/controllers"
-	"metabit-service/api/config"
-)
-
-var (
-	tokenController = controllers.NewTokenController()
+	"metabit-service/admin/router"
+	"metabit-service/core/config"
 )
 
 func main() {
-	router := gin.Default()
-
-	tokens := router.Group("/tokens")
-	{
-		tokens.GET("", tokenController.FindList)
-		tokens.GET("/:id", tokenController.FindById)
-	}
-
-	router.Run(config.G_CONFIG.Port)
+	r := router.Routers()
+	r.Run(config.G_CONFIG.Port)
 }

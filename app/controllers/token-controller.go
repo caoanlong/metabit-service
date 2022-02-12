@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"metabit-service/api/models"
-	"metabit-service/api/services"
-	"metabit-service/api/utils"
 	"metabit-service/app/dtos"
+	"metabit-service/core/models"
+	"metabit-service/core/services"
+	"metabit-service/core/utils"
 )
 
 type TokenController interface {

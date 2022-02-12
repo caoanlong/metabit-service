@@ -1,8 +1,8 @@
 package services
 
 import (
-	"metabit-service/api/models"
-	"metabit-service/api/repositories"
+	"metabit-service/core/models"
+	"metabit-service/core/repositories"
 )
 
 type TokenService interface {

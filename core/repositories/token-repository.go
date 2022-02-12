@@ -2,8 +2,8 @@ package repositories
 
 import (
 	"gorm.io/gorm"
-	"metabit-service/api/config"
-	"metabit-service/api/models"
+	"metabit-service/core/config"
+	"metabit-service/core/models"
 )
 
 type TokenRepository interface {

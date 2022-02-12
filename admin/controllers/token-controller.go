@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-	"metabit-service/api/services"
-	"metabit-service/api/utils"
+	"metabit-service/admin/dtos"
+	"metabit-service/core/models"
+	"metabit-service/core/services"
+	"metabit-service/core/utils"
 )
 
 type TokenController interface {
@@ -25,32 +26,50 @@ func NewTokenController() TokenController {
 	}
 }
 
-func (t tokenController) FindAll(ctx *gin.Context) {
-	utils.Success(ctx)
+func (controller *tokenController) FindAll(ctx *gin.Context) {
+	list := controller.tokenService.FindAll()
+	utils.Success(ctx, list)
 }
 
-func (t tokenController) FindList(ctx *gin.Context) {
+func (controller *tokenController) FindList(ctx *gin.Context) {
 	//chain := ctx.Query("chain")
-	env := viper.GetString("env")
-	utils.Success(ctx, env)
+	//env := config.G_CONFIG.Env
+	list := controller.tokenService.FindList()
+	utils.Success(ctx, list)
 }
 
-func (t tokenController) FindById(ctx *gin.Context) {
+func (controller *tokenController) FindById(ctx *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t tokenController) Insert(ctx *gin.Context) {
+func (controller *tokenController) Insert(ctx *gin.Context) {
+	var dto dtos.InsertTokenDTO
+	err := ctx.ShouldBind(&dto)
+	if err != nil {
+		utils.Fail(ctx, 500, err.Error())
+	} else {
+		token := models.Token{
+			Name:      dto.Name,
+			Symbol:    dto.Symbol,
+			Logo:      dto.Logo,
+			Decimals:  dto.Decimals,
+			Address:   dto.Address,
+			Balance:   "0",
+			ChainType: dto.ChainType,
+			Network:   dto.Network,
+		}
+		controller.tokenService.Insert(token)
+		utils.Success(ctx)
+	}
+}
+
+func (controller *tokenController) Update(ctx *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t tokenController) Update(ctx *gin.Context) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (t tokenController) Del(ctx *gin.Context) {
+func (controller *tokenController) Del(ctx *gin.Context) {
 	//TODO implement me
 	panic("implement me")
 }

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"metabit-service/api/config"
 	"metabit-service/app/router"
+	"metabit-service/core/config"
 )
 
 func main() {
