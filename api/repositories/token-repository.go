@@ -8,7 +8,7 @@ import (
 
 type TokenRepository interface {
 	FindAll() []models.Token
-	FindList() []models.Token
+	FindList(chainType string, network string) []models.Token
 	FindById(tokenID uint64) models.Token
 	Insert(token models.Token) models.Token
 	Update(token models.Token) models.Token
@@ -31,9 +31,10 @@ func (db *tokenConnection) FindAll() []models.Token {
 	return tokens
 }
 
-func (db *tokenConnection) FindList() []models.Token {
-	//TODO implement me
-	panic("implement me")
+func (db *tokenConnection) FindList(chainType string, network string) []models.Token {
+	var tokens []models.Token
+	db.connection.Find(&tokens)
+	return tokens
 }
 
 func (db *tokenConnection) FindById(tokenID uint64) models.Token {

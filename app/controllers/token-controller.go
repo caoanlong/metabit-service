@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"metabit-service/api/config"
 	"metabit-service/api/models"
 	"metabit-service/api/services"
 	"metabit-service/api/utils"
@@ -28,13 +27,15 @@ func NewTokenController() TokenController {
 }
 
 func (controller *tokenController) FindAll(ctx *gin.Context) {
-	utils.Success(ctx)
+	list := controller.tokenService.FindAll()
+	utils.Success(ctx, list)
 }
 
 func (controller *tokenController) FindList(ctx *gin.Context) {
 	//chain := ctx.Query("chain")
-	env := config.G_CONFIG.Env
-	utils.Success(ctx, env)
+	//env := config.G_CONFIG.Env
+	list := controller.tokenService.FindList()
+	utils.Success(ctx, list)
 }
 
 func (controller *tokenController) FindById(ctx *gin.Context) {
@@ -49,14 +50,14 @@ func (controller *tokenController) Insert(ctx *gin.Context) {
 		utils.Fail(ctx, 500, err.Error())
 	} else {
 		token := models.Token{
-			Name:     dto.Name,
-			Symbol:   dto.Symbol,
-			Logo:     dto.Logo,
-			Decimals: dto.Decimals,
-			Address:  dto.Address,
-			Balance:  "0",
-			Type:     dto.Type,
-			Category: dto.Category,
+			Name:      dto.Name,
+			Symbol:    dto.Symbol,
+			Logo:      dto.Logo,
+			Decimals:  dto.Decimals,
+			Address:   dto.Address,
+			Balance:   "0",
+			ChainType: dto.ChainType,
+			Network:   dto.Network,
 		}
 		controller.tokenService.Insert(token)
 		utils.Success(ctx)

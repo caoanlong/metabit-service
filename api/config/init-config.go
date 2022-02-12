@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/gobuffalo/packr/v2"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"metabit-service/api/models"
 	"os"
 )
 
@@ -16,6 +18,12 @@ func init() {
 		panic(err)
 	}
 	G_DB = initDB()
+	//if G_DB != nil {
+	//	registerTables(G_DB) // 初始化表
+	//	// 程序结束前关闭数据库链接
+	//	db, _ := G_DB.DB()
+	//	defer db.Close()
+	//}
 }
 
 func initConfig() (err error) {
@@ -70,4 +78,14 @@ func initDB() *gorm.DB {
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
 		return db
 	}
+}
+
+func registerTables(db *gorm.DB) {
+	err := db.AutoMigrate(
+		models.Token{},
+	)
+	if err != nil {
+		G_LOG.Error("register table failed", zap.Error(err))
+	}
+	G_LOG.Info("register table success")
 }
