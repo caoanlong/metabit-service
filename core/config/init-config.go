@@ -13,6 +13,7 @@ import (
 )
 
 func init() {
+	
 	err := initConfig()
 	if err != nil {
 		panic(err)

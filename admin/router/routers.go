@@ -8,6 +8,7 @@ import (
 var (
 	tokenController   = controllers.NewTokenController()
 	networkController = controllers.NewNetworkController()
+	sysUserController = controllers.NewSysUserController()
 )
 
 func Routers() *gin.Engine {
@@ -29,6 +30,15 @@ func Routers() *gin.Engine {
 		networks.POST("", networkController.Insert)
 		networks.PUT("/:id", networkController.Update)
 		networks.DELETE("/:id", networkController.Del)
+	}
+	sysusers := admin.Group("/sysusers")
+	{
+		sysusers.POST("/login", sysUserController.Login)
+		sysusers.GET("", sysUserController.FindAll)
+		sysusers.GET("/:id", sysUserController.FindById)
+		sysusers.POST("", sysUserController.Insert)
+		sysusers.PUT("/:id", sysUserController.Update)
+		sysusers.DELETE("/:id", sysUserController.Del)
 	}
 
 	return router
