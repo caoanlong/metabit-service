@@ -6,12 +6,12 @@ import (
 )
 
 type TokenService interface {
-	FindAll() []models.Token
-	FindList() []models.Token
-	FindById(tokenID uint64) models.Token
-	Insert(token models.Token) models.Token
-	Update(token models.Token) models.Token
-	Del(tokenID uint64)
+	FindAll() (error, *[]models.Token)
+	FindList() (error, *[]models.Token)
+	FindById(tokenID uint64) (error, *models.Token)
+	Insert(token *models.Token) (error, *models.Token)
+	Update(token *models.Token) (error, *models.Token)
+	Del(tokenID uint64) error
 }
 
 type tokenService struct {
@@ -24,29 +24,29 @@ func NewTokenService() TokenService {
 	}
 }
 
-func (service *tokenService) FindAll() []models.Token {
+func (service *tokenService) FindAll() (error, *[]models.Token) {
 	return service.tokenRepository.FindAll()
 }
 
-func (service *tokenService) FindList() []models.Token {
+func (service *tokenService) FindList() (error, *[]models.Token) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (service *tokenService) FindById(tokenID uint64) models.Token {
+func (service *tokenService) FindById(tokenID uint64) (error, *models.Token) {
 	return service.tokenRepository.FindById(tokenID)
 }
 
-func (service *tokenService) Insert(token models.Token) models.Token {
+func (service *tokenService) Insert(token *models.Token) (error, *models.Token) {
 	return service.tokenRepository.Insert(token)
 }
 
-func (service *tokenService) Update(token models.Token) models.Token {
+func (service *tokenService) Update(token *models.Token) (error, *models.Token) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (service *tokenService) Del(tokenID uint64) {
+func (service *tokenService) Del(tokenID uint64) error {
 	//TODO implement me
 	panic("implement me")
 }

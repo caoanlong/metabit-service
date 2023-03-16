@@ -27,14 +27,22 @@ func NewTokenController() TokenController {
 }
 
 func (controller *tokenController) FindAll(ctx *gin.Context) {
-	list := controller.tokenService.FindAll()
+	err, list := controller.tokenService.FindAll()
+	if err != nil {
+		utils.Fail(ctx, 500, err.Error())
+		return
+	}
 	utils.Success(ctx, list)
 }
 
 func (controller *tokenController) FindList(ctx *gin.Context) {
 	//chain := ctx.Query("chain")
 	//env := config.G_CONFIG.Env
-	list := controller.tokenService.FindList()
+	err, list := controller.tokenService.FindList()
+	if err != nil {
+		utils.Fail(ctx, 500, err.Error())
+		return
+	}
 	utils.Success(ctx, list)
 }
 
@@ -47,21 +55,25 @@ func (controller *tokenController) Insert(ctx *gin.Context) {
 	var dto dtos.InsertTokenDTO
 	err := ctx.ShouldBind(&dto)
 	if err != nil {
-		utils.Fail(ctx, 500, err.Error())
-	} else {
-		token := models.Token{
-			Name:      dto.Name,
-			Symbol:    dto.Symbol,
-			Logo:      dto.Logo,
-			Decimals:  dto.Decimals,
-			Address:   dto.Address,
-			Balance:   "0",
-			ChainType: dto.ChainType,
-			Network:   dto.Network,
-		}
-		controller.tokenService.Insert(token)
-		utils.Success(ctx)
+		utils.Fail(ctx, 400, err.Error())
+		return
 	}
+	token := models.Token{
+		Name:      dto.Name,
+		Symbol:    dto.Symbol,
+		Logo:      dto.Logo,
+		Decimals:  dto.Decimals,
+		Address:   dto.Address,
+		Balance:   "0",
+		ChainType: dto.ChainType,
+		Network:   dto.Network,
+	}
+	err, _ = controller.tokenService.Insert(&token)
+	if err != nil {
+		utils.Fail(ctx, 500, err.Error())
+		return
+	}
+	utils.Success(ctx)
 }
 
 func (controller *tokenController) Update(ctx *gin.Context) {

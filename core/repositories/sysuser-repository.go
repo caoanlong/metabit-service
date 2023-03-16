@@ -21,7 +21,7 @@ type sysUserConnection struct {
 
 func NewSysUserRepository() SysUserRepository {
 	return &sysUserConnection{
-		connection: config.G_DB,
+		connection: config.GDb,
 	}
 }
 

@@ -21,7 +21,7 @@ type networkConnection struct {
 
 func NewNetworkRepository() NetworkRepository {
 	return &networkConnection{
-		connection: config.G_DB,
+		connection: config.GDb,
 	}
 }
 

@@ -3,6 +3,7 @@ package config
 import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 	"log"
 	"os"
 	"time"
@@ -15,13 +16,18 @@ type _gorm struct{}
 // Config gorm 自定义配置
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (g *_gorm) Config() *gorm.Config {
-	config := &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
+	config := &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	}
 	_default := logger.New(NewWriter(log.New(os.Stdout, "\r\n", log.LstdFlags)), logger.Config{
 		SlowThreshold: 200 * time.Millisecond,
 		LogLevel:      logger.Warn,
 		Colorful:      true,
 	})
-	switch G_CONFIG.Mysql.LogMode {
+	switch GConfig.Mysql.LogMode {
 	case "silent", "Silent":
 		config.Logger = _default.LogMode(logger.Silent)
 	case "error", "Error":

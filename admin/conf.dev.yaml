@@ -1,11 +1,11 @@
 env: dev
 mysql:
-  path: localhost
+  path: 64.176.38.50
   port: 3306
   config: charset=utf8mb4&parseTime=True&loc=Local
   db-name: metabit
   username: root
-  password: Yzl3141592654
+  password: Pai314159
   max-idle-conns: 0
   max-open-conns: 0
   log-mode: ""

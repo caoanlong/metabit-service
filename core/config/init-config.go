@@ -1,39 +1,59 @@
 package config
 
 import (
-	"bytes"
+	"errors"
 	"fmt"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/utils"
 	"metabit-service/core/models"
 	"os"
 )
 
-func init() {
-	
-	err := initConfig()
+var GDb *gorm.DB
+var GConfig Conf
+var GLog *zap.Logger
+
+func Init() {
+	env := "dev"
+	envs := []string{"dev", "test", "prod"}
+	if len(os.Args) == 2 {
+		env = os.Args[1]
+		if !utils.Contains(envs, env) {
+			panic(errors.New("env params error"))
+		}
+	}
+	err := initConfig(env)
 	if err != nil {
 		panic(err)
 	}
-	G_DB = initDB()
-	//if G_DB != nil {
-	//	registerTables(G_DB) // 初始化表
-	//	// 程序结束前关闭数据库链接
-	//	db, _ := G_DB.DB()
-	//	defer db.Close()
-	//}
+	GDb, err = initDB()
+	if err != nil {
+		panic(err)
+	}
+
+	if GDb != nil {
+		//registerTables(GDb) // 初始化表
+		// 程序结束前关闭数据库链接
+		//db, _ := GDb.DB()
+		//defer func(db *sql.DB) {
+		//	err := db.Close()
+		//	if err != nil {
+		//		fmt.Println(err)
+		//	}
+		//}(db)
+	}
 }
 
-func initConfig() (err error) {
-	box := packr.New("myBox", "../")
+func initConfig(env string) (err error) {
 	configType := "yaml"
-	defaultConfig := box.Bytes("conf.yaml")
 	v := viper.New()
 	v.SetConfigType(configType)
-	err = v.ReadConfig(bytes.NewReader(defaultConfig))
+	v.SetConfigFile("./conf.yaml")
+	v.AddConfigPath(".")
+	err = v.ReadInConfig()
 	if err != nil {
 		return
 	}
@@ -43,50 +63,54 @@ func initConfig() (err error) {
 		viper.SetDefault(k, v)
 	}
 
-	env := os.Getenv("GO_ENV")
-
 	// 根据配置的env读取相应的配置信息
-	envConfig := box.Bytes("conf.dev.yaml")
-	if env != "" {
-		envConfig = box.Bytes("conf." + env + ".yaml")
-	}
 	viper.SetConfigType(configType)
-	err = viper.ReadConfig(bytes.NewReader(envConfig))
+	viper.SetConfigFile("./conf." + env + ".yaml")
+	err = viper.ReadInConfig()
 	if err != nil {
 		return
 	}
-	if err := viper.Unmarshal(&G_CONFIG); err != nil {
+	if err := viper.Unmarshal(&GConfig); err != nil {
 		fmt.Println(err)
 	}
 	return
 }
 
-func initDB() *gorm.DB {
-	m := G_CONFIG.Mysql
+func initDB() (*gorm.DB, error) {
+	m := GConfig.Mysql
 	if m.Dbname == "" {
-		return nil
+		return nil, errors.New("DB name can not be null")
 	}
 	mysqlConfig := mysql.Config{
 		DSN:                       m.Dsn(), // DSN data source name
 		DefaultStringSize:         191,     // string 类型字段的默认长度
 		SkipInitializeWithVersion: false,   // 根据版本自动配置
 	}
-	if db, err := gorm.Open(mysql.New(mysqlConfig), Gorm.Config()); err != nil {
-		return nil
-	} else {
-		sqlDB, _ := db.DB()
-		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
-		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
-		return db
+	db, err := gorm.Open(mysql.New(mysqlConfig), Gorm.Config())
+	if err != nil {
+		return nil, err
 	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+	sqlDB.SetMaxIdleConns(m.MaxIdleConns)
+	sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+	return db, nil
+}
+
+func GetDB() *gorm.DB {
+	return GDb
 }
 
 func registerTables(db *gorm.DB) {
 	err := db.AutoMigrate(
 		models.Token{},
+		models.Network{},
+		models.SysUser{},
 	)
 	if err != nil {
-		G_LOG.Error("register table failed", zap.Error(err))
+		GLog.Error("register table failed", zap.Error(err))
 	}
-	G_LOG.Info("register table success")
+	GLog.Info("register table success")
 }

@@ -6,6 +6,6 @@ type InsertTokenDTO struct {
 	Logo      string `json:"logo"`
 	Decimals  uint8  `json:"decimals"`
 	Address   string `json:"address"`
-	ChainType string `json:"chainType"`
+	ChainType uint   `json:"chainType"`
 	Network   string `json:"network"`
 }

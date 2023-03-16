@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	config.Init()
 	r := router.Routers()
-	r.Run(config.G_CONFIG.Port)
+	r.Run(config.GConfig.Port)
 }

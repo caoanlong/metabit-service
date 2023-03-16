@@ -18,9 +18,9 @@ func NewWriter(w logger.Writer) *writer {
 // Printf 格式化打印日志
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (w *writer) Printf(message string, data ...interface{}) {
-	logZap := G_CONFIG.Mysql.LogZap
+	logZap := GConfig.Mysql.LogZap
 	if logZap {
-		G_LOG.Info(fmt.Sprintf(message+"\n", data...))
+		GLog.Info(fmt.Sprintf(message+"\n", data...))
 	} else {
 		w.Writer.Printf(message, data...)
 	}
