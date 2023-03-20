@@ -6,12 +6,12 @@ import (
 )
 
 type NetworkService interface {
-	FindAll() []models.Network
-	FindList() []models.Network
-	FindById(networkID uint64) models.Network
-	Insert(network models.Network) models.Network
-	Update(network models.Network) models.Network
-	Del(networkID uint64)
+	FindAll() (error, *[]models.Network)
+	FindList() (error, *[]models.Network)
+	FindById(networkID uint64) (error, *models.Network)
+	Insert(network *models.Network) (error, *models.Network)
+	Update(network *models.Network) (error, *models.Network)
+	Del(networkID uint64) error
 }
 
 type networkService struct {
@@ -24,29 +24,29 @@ func NewNetworkService() NetworkService {
 	}
 }
 
-func (service *networkService) FindAll() []models.Network {
+func (service *networkService) FindAll() (error, *[]models.Network) {
 	return service.networkRepository.FindAll()
 }
 
-func (service *networkService) FindList() []models.Network {
+func (service *networkService) FindList() (error, *[]models.Network) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (service *networkService) FindById(tokenID uint64) models.Network {
+func (service *networkService) FindById(tokenID uint64) (error, *models.Network) {
 	return service.networkRepository.FindById(tokenID)
 }
 
-func (service *networkService) Insert(network models.Network) models.Network {
+func (service *networkService) Insert(network *models.Network) (error, *models.Network) {
 	return service.networkRepository.Insert(network)
 }
 
-func (service *networkService) Update(network models.Network) models.Network {
+func (service *networkService) Update(network *models.Network) (error, *models.Network) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (service *networkService) Del(networkID uint64) {
+func (service *networkService) Del(networkID uint64) error {
 	//TODO implement me
 	panic("implement me")
 }

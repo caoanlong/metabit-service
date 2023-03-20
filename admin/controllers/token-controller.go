@@ -27,14 +27,20 @@ func NewTokenController() TokenController {
 }
 
 func (controller *tokenController) FindAll(ctx *gin.Context) {
-	list := controller.tokenService.FindAll()
+	err, list := controller.tokenService.FindAll()
+	if err != nil {
+		utils.Fail(ctx, 500, err.Error())
+		return
+	}
 	utils.Success(ctx, list)
 }
 
 func (controller *tokenController) FindList(ctx *gin.Context) {
-	//chain := ctx.Query("chain")
-	//env := config.G_CONFIG.Env
-	list := controller.tokenService.FindList()
+	err, list := controller.tokenService.FindList()
+	if err != nil {
+		utils.Fail(ctx, 500, err.Error())
+		return
+	}
 	utils.Success(ctx, list)
 }
 
@@ -59,7 +65,7 @@ func (controller *tokenController) Insert(ctx *gin.Context) {
 			ChainType: dto.ChainType,
 			Network:   dto.Network,
 		}
-		controller.tokenService.Insert(token)
+		err, _ = controller.tokenService.Insert(&token)
 		utils.Success(ctx)
 	}
 }

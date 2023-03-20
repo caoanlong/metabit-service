@@ -16,17 +16,17 @@ type TokenRepository interface {
 	Del(token *models.Token) error
 }
 
-type DbContext struct {
+type tokenContext struct {
 	db func() *gorm.DB
 }
 
 func NewTokenRepository() TokenRepository {
-	return &DbContext{
+	return &tokenContext{
 		db: config.GetDB,
 	}
 }
 
-func (ctx *DbContext) FindAll() (error, *[]models.Token) {
+func (ctx *tokenContext) FindAll() (error, *[]models.Token) {
 	var tokens []models.Token
 	tx := ctx.db().Find(&tokens)
 	if tx.Error != nil {
@@ -35,7 +35,7 @@ func (ctx *DbContext) FindAll() (error, *[]models.Token) {
 	return nil, &tokens
 }
 
-func (ctx *DbContext) FindList(chainType uint, network string) (error, *[]models.Token) {
+func (ctx *tokenContext) FindList(chainType uint, network string) (error, *[]models.Token) {
 	var tokens []models.Token
 	tx := ctx.db().Find(&tokens)
 	if tx.Error != nil {
@@ -44,7 +44,7 @@ func (ctx *DbContext) FindList(chainType uint, network string) (error, *[]models
 	return nil, &tokens
 }
 
-func (ctx *DbContext) FindById(tokenID uint64) (error, *models.Token) {
+func (ctx *tokenContext) FindById(tokenID uint64) (error, *models.Token) {
 	var token models.Token
 	tx := ctx.db().Find(&token, tokenID)
 	if tx.Error != nil {
@@ -53,7 +53,7 @@ func (ctx *DbContext) FindById(tokenID uint64) (error, *models.Token) {
 	return nil, &token
 }
 
-func (ctx *DbContext) Insert(token *models.Token) (error, *models.Token) {
+func (ctx *tokenContext) Insert(token *models.Token) (error, *models.Token) {
 	tx := ctx.db().Create(token)
 	if tx.Error != nil {
 		return tx.Error, nil
@@ -64,7 +64,7 @@ func (ctx *DbContext) Insert(token *models.Token) (error, *models.Token) {
 	return nil, token
 }
 
-func (ctx *DbContext) Update(token *models.Token) (error, *models.Token) {
+func (ctx *tokenContext) Update(token *models.Token) (error, *models.Token) {
 	tx := ctx.db().Updates(token)
 	if tx.Error != nil {
 		return tx.Error, nil
@@ -75,7 +75,7 @@ func (ctx *DbContext) Update(token *models.Token) (error, *models.Token) {
 	return nil, token
 }
 
-func (ctx *DbContext) Del(token *models.Token) error {
+func (ctx *tokenContext) Del(token *models.Token) error {
 	tx := ctx.db().Delete(token)
 	if tx.Error != nil {
 		return tx.Error

@@ -6,11 +6,21 @@ import (
 )
 
 var (
-	tokenController = controllers.NewTokenController()
+	networkController = controllers.NewNetworkController()
+	tokenController   = controllers.NewTokenController()
 )
 
 func Routers() *gin.Engine {
 	router := gin.Default()
+
+	networks := router.Group("/networks")
+	{
+		networks.GET("", networkController.FindAll)
+		networks.GET("/:id", networkController.FindById)
+		networks.POST("", networkController.Insert)
+		networks.PUT("/:id", networkController.Update)
+		networks.DELETE("/:id", networkController.Del)
+	}
 
 	tokens := router.Group("/tokens")
 	{
